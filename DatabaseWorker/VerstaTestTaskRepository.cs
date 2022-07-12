@@ -5,7 +5,7 @@ namespace DatabaseWorker
 {
     internal class VerstaTestTaskRepository : IVerstaTestTaskRepository
     {
-        private VerstaTestTaskContext dbContext;
+        private readonly VerstaTestTaskContext dbContext;
         public VerstaTestTaskRepository(VerstaTestTaskContext dbContext)
         {
             this.dbContext = dbContext;
@@ -22,36 +22,38 @@ namespace DatabaseWorker
             return deliveryOrderForm;
         }
 
-        public async Task<DeliveryOrderForm> GetDeliveryOrderFormByIdAsync(int id)
+        public async Task<DeliveryOrderForm?> GetDeliveryOrderFormByIdAsync(int id)
         {
-            DeliveryOrderForm deliveryOrderForm = (await dbContext.DeliveryOrderForms.FirstOrDefaultAsync(x => x != null && x.Id == id))!;
-            if (deliveryOrderForm == null)
-            {
-                throw new ArgumentNullException(nameof(deliveryOrderForm));
-            }
-
+            DeliveryOrderForm? deliveryOrderForm = await dbContext.DeliveryOrderForms.FirstOrDefaultAsync(x => x.Id == id);
             return deliveryOrderForm;
         }
 
-        public async Task CreateDeliveryOrderFormsAsync(DeliveryOrderForm deliveryOrderForm)
+        public async Task AddDeliveryOrderFormsAsync(DeliveryOrderForm deliveryOrderForm)
         {
             if (deliveryOrderForm == null)
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
             }
+            
             await dbContext.DeliveryOrderForms.AddAsync(deliveryOrderForm);
             await dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateDeliveryOrderFormsAsync(DeliveryOrderForm updatedDeliveryOrderForm)
         {
+            if (updatedDeliveryOrderForm == null)
+            {
+                throw new ArgumentNullException(nameof(updatedDeliveryOrderForm));
+            }
+
             dbContext.Update(updatedDeliveryOrderForm);
             await dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteDeliveryOrderFormsAsync(int id)
         {
-            DeliveryOrderForm deliveryOrderForm = dbContext.DeliveryOrderForms.FirstOrDefault(x => x != null && x.Id == id)!;
+            DeliveryOrderForm? deliveryOrderForm = dbContext.DeliveryOrderForms.FirstOrDefault(x => x.Id == id)!;
+
             if (deliveryOrderForm == null)
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
