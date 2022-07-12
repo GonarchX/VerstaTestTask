@@ -1,38 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DatabaseWorker;
+using DatabaseWorker.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VerstaTestTask.Data;
-using VerstaTestTask.Models;
 
 namespace VerstaTestTask.Controllers
 {
     public class DeliveryOrderFormsController : Controller
     {
-        private readonly VerstaTestTaskContext _context;
+        private readonly IVerstaTestTaskRepository dbRepository;
 
-        public DeliveryOrderFormsController(VerstaTestTaskContext context)
+        public DeliveryOrderFormsController(IVerstaTestTaskRepository dbRepository)
         {
-            _context = context;
+            this.dbRepository = dbRepository;
         }
 
         // GET: DeliveryOrderForms
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            return _context.DeliveryOrderForm != null ?
-                        View(await _context.DeliveryOrderForm.ToListAsync()) :
-                        Problem("Entity set 'VerstaTestTaskContext.DeliveryOrderForm'  is null.");
+            return View(await dbRepository.GetDeliveryOrderFormsAsync());
         }
 
         // GET: DeliveryOrderForms/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.DeliveryOrderForm == null)
-            {
-                return NotFound();
-            }
-
-            var deliveryOrderForm = await _context.DeliveryOrderForm
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var deliveryOrderForm = await dbRepository.GetDeliveryOrderFormByIdAsync(id);
             if (deliveryOrderForm == null)
             {
                 return NotFound();
@@ -42,49 +35,47 @@ namespace VerstaTestTask.Controllers
         }
 
         // GET: DeliveryOrderForms/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: DeliveryOrderForms/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")] DeliveryOrderForm deliveryOrderForm)
+        public async Task<IActionResult> Create(
+            [Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")]
+            DeliveryOrderForm deliveryOrderForm)
         {
+            //TODO: Добавить проверку на то, что указанная дата не раньше нынешней даты
             if (ModelState.IsValid)
             {
-                _context.Add(deliveryOrderForm);
-                await _context.SaveChangesAsync();
+                await dbRepository.AddDeliveryOrderFormsAsync(deliveryOrderForm);
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(deliveryOrderForm);
         }
 
         // GET: DeliveryOrderForms/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.DeliveryOrderForm == null)
-            {
-                return NotFound();
-            }
-
-            var deliveryOrderForm = await _context.DeliveryOrderForm.FindAsync(id);
+            var deliveryOrderForm = await dbRepository.GetDeliveryOrderFormByIdAsync(id);
             if (deliveryOrderForm == null)
             {
                 return NotFound();
             }
+
             return View(deliveryOrderForm);
         }
 
         // POST: DeliveryOrderForms/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")] DeliveryOrderForm deliveryOrderForm)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")]
+            DeliveryOrderForm deliveryOrderForm)
         {
             if (id != deliveryOrderForm.Id)
             {
@@ -93,37 +84,19 @@ namespace VerstaTestTask.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(deliveryOrderForm);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DeliveryOrderFormExists(deliveryOrderForm.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await dbRepository.UpdateDeliveryOrderFormsAsync(deliveryOrderForm);
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(deliveryOrderForm);
         }
 
         // GET: DeliveryOrderForms/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.DeliveryOrderForm == null)
-            {
-                return NotFound();
-            }
-
-            var deliveryOrderForm = await _context.DeliveryOrderForm
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var deliveryOrderForm = await dbRepository.GetDeliveryOrderFormByIdAsync(id);
             if (deliveryOrderForm == null)
             {
                 return NotFound();
@@ -134,26 +107,10 @@ namespace VerstaTestTask.Controllers
 
         // POST: DeliveryOrderForms/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.DeliveryOrderForm == null)
-            {
-                return Problem("Entity set 'VerstaTestTaskContext.DeliveryOrderForm'  is null.");
-            }
-            var deliveryOrderForm = await _context.DeliveryOrderForm.FindAsync(id);
-            if (deliveryOrderForm != null)
-            {
-                _context.DeliveryOrderForm.Remove(deliveryOrderForm);
-            }
-
-            await _context.SaveChangesAsync();
+            await dbRepository.DeleteDeliveryOrderFormsAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DeliveryOrderFormExists(int id)
-        {
-            return (_context.DeliveryOrderForm?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
