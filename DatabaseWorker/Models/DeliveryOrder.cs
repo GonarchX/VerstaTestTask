@@ -3,7 +3,7 @@ using DatabaseWorker.Models.ValidationAttribute;
 
 namespace DatabaseWorker.Models
 {
-    public class DeliveryOrderForm
+    public class DeliveryOrder
     {
         public int Id { get; set; }
         [Required]
@@ -20,9 +20,9 @@ namespace DatabaseWorker.Models
         [DateNotLessThanNow]
         public DateTime CargoPickupDate { get; set; }
 
-        public DeliveryOrderForm() { }
+        public DeliveryOrder() { }
 
-        public DeliveryOrderForm(int id, string? senderCity, string? senderAddress, string? recipientCity, string? recipientAddress, float cargoWeight, DateTime cargoPickupDate)
+        public DeliveryOrder(int id, string? senderCity, string? senderAddress, string? recipientCity, string? recipientAddress, float cargoWeight, DateTime cargoPickupDate)
         {
             Id = id;
             SenderCity = senderCity;

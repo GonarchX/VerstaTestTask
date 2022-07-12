@@ -11,9 +11,9 @@ namespace DatabaseWorker
             this.dbContext = dbContext;
         }
 
-        public async Task<List<DeliveryOrderForm>> GetDeliveryOrderFormsAsync()
+        public async Task<List<DeliveryOrder>> GetDeliveryOrderFormsAsync()
         {
-            List<DeliveryOrderForm> deliveryOrderForm = (await dbContext.DeliveryOrderForms.ToListAsync())!;
+            List<DeliveryOrder> deliveryOrderForm = (await dbContext.DeliveryOrderForms.ToListAsync())!;
             if (deliveryOrderForm == null)
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
@@ -22,13 +22,13 @@ namespace DatabaseWorker
             return deliveryOrderForm;
         }
 
-        public async Task<DeliveryOrderForm?> GetDeliveryOrderFormByIdAsync(int id)
+        public async Task<DeliveryOrder?> GetDeliveryOrderFormByIdAsync(int id)
         {
-            DeliveryOrderForm? deliveryOrderForm = await dbContext.DeliveryOrderForms.FirstOrDefaultAsync(x => x.Id == id);
+            DeliveryOrder? deliveryOrderForm = await dbContext.DeliveryOrderForms.FirstOrDefaultAsync(x => x.Id == id);
             return deliveryOrderForm;
         }
 
-        public async Task AddDeliveryOrderFormsAsync(DeliveryOrderForm deliveryOrderForm)
+        public async Task AddDeliveryOrderFormsAsync(DeliveryOrder deliveryOrderForm)
         {
             if (deliveryOrderForm == null)
             {
@@ -39,7 +39,7 @@ namespace DatabaseWorker
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateDeliveryOrderFormsAsync(DeliveryOrderForm updatedDeliveryOrderForm)
+        public async Task UpdateDeliveryOrderFormsAsync(DeliveryOrder updatedDeliveryOrderForm)
         {
             if (updatedDeliveryOrderForm == null)
             {
@@ -52,7 +52,7 @@ namespace DatabaseWorker
 
         public async Task DeleteDeliveryOrderFormsAsync(int id)
         {
-            DeliveryOrderForm? deliveryOrderForm = dbContext.DeliveryOrderForms.FirstOrDefault(x => x.Id == id)!;
+            DeliveryOrder? deliveryOrderForm = dbContext.DeliveryOrderForms.FirstOrDefault(x => x.Id == id)!;
 
             if (deliveryOrderForm == null)
             {

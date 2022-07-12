@@ -45,7 +45,7 @@ namespace VerstaTestTask.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(
             [Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")]
-            DeliveryOrderForm deliveryOrderForm)
+            DeliveryOrder deliveryOrderForm)
         {
             if (ModelState.IsValid)
             {
@@ -74,7 +74,7 @@ namespace VerstaTestTask.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id,
             [Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")]
-            DeliveryOrderForm deliveryOrderForm)
+            DeliveryOrder deliveryOrderForm)
         {
             if (id != deliveryOrderForm.Id)
             {
