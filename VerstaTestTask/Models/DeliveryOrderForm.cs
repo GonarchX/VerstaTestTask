@@ -1,18 +1,26 @@
-﻿namespace VerstaTestTask.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VerstaTestTask.Models
 {
     public class DeliveryOrderForm
     {
         public int Id { get; set; }
-        public string SenderCity { get; set; }
-        public string SenderAddress { get; set; }
-        public string RecipientCity { get; set; }
-        public string RecipientAddress { get; set; }
+        [Required]
+        public string? SenderCity { get; set; }
+        [Required]
+        public string? SenderAddress { get; set; }
+        [Required]
+        public string? RecipientCity { get; set; }
+        [Required]
+        public string? RecipientAddress { get; set; }
+        [Required]
         public float CargoWeight { get; set; }
+        [Required]
         public DateTime CargoPickupDate { get; set; }
 
         public DeliveryOrderForm() { }
 
-        public DeliveryOrderForm(int id, string senderCity, string senderAddress, string recipientCity, string recipientAddress, float cargoWeight, DateTime cargoPickupDate)
+        public DeliveryOrderForm(int id, string? senderCity, string? senderAddress, string? recipientCity, string? recipientAddress, float cargoWeight, DateTime cargoPickupDate)
         {
             Id = id;
             SenderCity = senderCity;

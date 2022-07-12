@@ -1,3 +1,5 @@
+﻿using Microsoft.EntityFrameworkCore;
+using VerstaTestTask.Data;
 namespace VerstaTestTask
 {
     public class Program
@@ -5,6 +7,9 @@ namespace VerstaTestTask
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<VerstaTestTaskContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Connection") ?? throw new InvalidOperationException("Connection string 'Connection' not found.")));
+            var configuration = builder.Configuration;
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -12,7 +17,11 @@ namespace VerstaTestTask
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment())
+            {
+                
+            }
+            else
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -28,7 +37,7 @@ namespace VerstaTestTask
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=DeliveryOrderForms}/{action=Index}/{id?}");
 
             app.Run();
         }
