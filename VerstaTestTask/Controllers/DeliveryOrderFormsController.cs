@@ -47,7 +47,6 @@ namespace VerstaTestTask.Controllers
             [Bind("Id,SenderCity,SenderAddress,RecipientCity,RecipientAddress,CargoWeight,CargoPickupDate")]
             DeliveryOrderForm deliveryOrderForm)
         {
-            //TODO: Добавить проверку на то, что указанная дата не раньше нынешней даты
             if (ModelState.IsValid)
             {
                 await dbRepository.AddDeliveryOrderFormsAsync(deliveryOrderForm);

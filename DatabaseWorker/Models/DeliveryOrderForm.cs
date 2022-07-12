@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DatabaseWorker.Models.ValidationAttribute;
 
 namespace DatabaseWorker.Models
 {
@@ -16,6 +17,7 @@ namespace DatabaseWorker.Models
         [Required]
         public float CargoWeight { get; set; }
         [Required]
+        [DateNotLessThanNow]
         public DateTime CargoPickupDate { get; set; }
 
         public DeliveryOrderForm() { }
@@ -29,6 +31,18 @@ namespace DatabaseWorker.Models
             RecipientAddress = recipientAddress;
             CargoWeight = cargoWeight;
             CargoPickupDate = cargoPickupDate;
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            List<ValidationResult> results = new List<ValidationResult>();
+
+            if (CargoPickupDate < DateTime.Now)
+            {
+                results.Add(new ValidationResult("Start date and time must be greater than current time", new[] { "StartDateTime" }));
+            }
+
+            return results;
         }
     }
 }
