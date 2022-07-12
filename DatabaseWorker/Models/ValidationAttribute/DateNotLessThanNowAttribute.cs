@@ -4,8 +4,9 @@ namespace DatabaseWorker.Models.ValidationAttribute
 {
     public class DateNotLessThanNowAttribute: System.ComponentModel.DataAnnotations.ValidationAttribute
     {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
+            if (value == null) throw new ArgumentNullException(nameof(value));
             ErrorMessage = "The date must not be less than the current date!";
 
             if (value is DateTime date)
@@ -15,7 +16,7 @@ namespace DatabaseWorker.Models.ValidationAttribute
                     return new ValidationResult(ErrorMessage);
                 }
             }
-            return ValidationResult.Success;
+            return ValidationResult.Success!;
         }
     }
 }
