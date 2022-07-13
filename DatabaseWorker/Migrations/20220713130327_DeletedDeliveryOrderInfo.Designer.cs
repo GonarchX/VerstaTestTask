@@ -4,6 +4,7 @@ using DatabaseWorker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatabaseWorker.Migrations
 {
     [DbContext(typeof(VerstaTestTaskContext))]
-    partial class VerstaTestTaskContextModelSnapshot : ModelSnapshot
+    [Migration("20220713130327_DeletedDeliveryOrderInfo")]
+    partial class DeletedDeliveryOrderInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
