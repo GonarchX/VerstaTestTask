@@ -56,7 +56,7 @@ namespace DatabaseWorker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeliveryOrderForms");
+                    b.ToTable("DeliveryOrder");
                 });
 #pragma warning restore 612, 618
         }

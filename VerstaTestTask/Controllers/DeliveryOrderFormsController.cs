@@ -1,7 +1,6 @@
 ﻿using DatabaseWorker;
 using DatabaseWorker.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace VerstaTestTask.Controllers
 {

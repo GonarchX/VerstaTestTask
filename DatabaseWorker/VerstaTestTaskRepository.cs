@@ -13,7 +13,7 @@ namespace DatabaseWorker
 
         public async Task<List<DeliveryOrder>> GetDeliveryOrderFormsAsync()
         {
-            List<DeliveryOrder> deliveryOrderForm = (await dbContext.DeliveryOrderForms.ToListAsync())!;
+            List<DeliveryOrder> deliveryOrderForm = await dbContext.DeliveryOrder.ToListAsync();
             if (deliveryOrderForm == null)
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
@@ -24,7 +24,7 @@ namespace DatabaseWorker
 
         public async Task<DeliveryOrder?> GetDeliveryOrderFormByIdAsync(int id)
         {
-            DeliveryOrder? deliveryOrderForm = await dbContext.DeliveryOrderForms.FirstOrDefaultAsync(x => x.Id == id);
+            DeliveryOrder? deliveryOrderForm = await dbContext.DeliveryOrder.FirstOrDefaultAsync(x => x.Id == id);
             return deliveryOrderForm;
         }
 
@@ -34,8 +34,8 @@ namespace DatabaseWorker
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
             }
-            
-            await dbContext.DeliveryOrderForms.AddAsync(deliveryOrderForm);
+
+            await dbContext.DeliveryOrder.AddAsync(deliveryOrderForm);
             await dbContext.SaveChangesAsync();
         }
 
@@ -50,16 +50,33 @@ namespace DatabaseWorker
             await dbContext.SaveChangesAsync();
         }
 
+        // TODO: При удалении значения просто переносить значение в другую таблицу
         public async Task DeleteDeliveryOrderFormsAsync(int id)
         {
-            DeliveryOrder? deliveryOrderForm = dbContext.DeliveryOrderForms.FirstOrDefault(x => x.Id == id)!;
+            /*await using (var transaction = await dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    dbContext.Database.ExecuteSqlCommand(@"UPDATE People SET Age = Age + 1 WHERE Name = 'Sam'");
+                    dbContext.People.Add(new Person { Age = 34, Name = "Bob" });
+                    await dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
+            }*/
+
+
+            DeliveryOrder? deliveryOrderForm = dbContext.DeliveryOrder.FirstOrDefault(x => x.Id == id)!;
 
             if (deliveryOrderForm == null)
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
             }
 
-            dbContext.DeliveryOrderForms.Remove(deliveryOrderForm);
+            dbContext.DeliveryOrder.Remove(deliveryOrderForm);
             await dbContext.SaveChangesAsync();
         }
     }

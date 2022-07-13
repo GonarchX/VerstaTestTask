@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DatabaseWorker.Models.ValidationAttribute;
+﻿using DatabaseWorker.Models.ValidationAttribute;
+using System.ComponentModel.DataAnnotations;
 
 namespace DatabaseWorker.Models
 {

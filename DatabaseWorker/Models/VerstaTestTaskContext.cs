@@ -4,7 +4,7 @@ namespace DatabaseWorker.Models
 {
     internal class VerstaTestTaskContext : DbContext
     {
-        public DbSet<DeliveryOrder> DeliveryOrderForms { get; set; } = null!;
+        public DbSet<DeliveryOrder> DeliveryOrder { get; set; } = null!;
         public VerstaTestTaskContext(DbContextOptions<VerstaTestTaskContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) { }
