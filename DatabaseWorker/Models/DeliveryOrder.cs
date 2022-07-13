@@ -19,30 +19,7 @@ namespace DatabaseWorker.Models
         [Required]
         [DateNotLessThanNow]
         public DateTime CargoPickupDate { get; set; }
-
-        public DeliveryOrder() { }
-
-        public DeliveryOrder(int id, string? senderCity, string? senderAddress, string? recipientCity, string? recipientAddress, float cargoWeight, DateTime cargoPickupDate)
-        {
-            Id = id;
-            SenderCity = senderCity;
-            SenderAddress = senderAddress;
-            RecipientCity = recipientCity;
-            RecipientAddress = recipientAddress;
-            CargoWeight = cargoWeight;
-            CargoPickupDate = cargoPickupDate;
-        }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            List<ValidationResult> results = new List<ValidationResult>();
-
-            if (CargoPickupDate < DateTime.Now)
-            {
-                results.Add(new ValidationResult("Start date and time must be greater than current time", new[] { "StartDateTime" }));
-            }
-
-            return results;
-        }
+        public bool IsDeleted { get; set; }
+        public DeletedDeliveryOrderInfo? DeletedDeliveryOrderInfo { get; set; }
     }
 }
