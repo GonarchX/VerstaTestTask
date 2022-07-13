@@ -10,10 +10,13 @@ namespace DatabaseWorker
         {
             this.dbContext = dbContext;
         }
-
+        
         public async Task<List<DeliveryOrder>> GetDeliveryOrderFormsAsync()
         {
-            List<DeliveryOrder> deliveryOrderForm = await dbContext.DeliveryOrder.ToListAsync();
+            List<DeliveryOrder>? deliveryOrderForm = await dbContext.DeliveryOrder
+                .Include(x => x.DeletedDeliveryOrderInfo)
+                .Where(c => c.Id != c.DeletedDeliveryOrderInfo.DeliveryOrderId)
+                .ToListAsync();
             if (deliveryOrderForm == null)
             {
                 throw new ArgumentNullException(nameof(deliveryOrderForm));
@@ -21,10 +24,13 @@ namespace DatabaseWorker
 
             return deliveryOrderForm;
         }
-
+й
         public async Task<DeliveryOrder?> GetDeliveryOrderFormByIdAsync(int id)
         {
-            DeliveryOrder? deliveryOrderForm = await dbContext.DeliveryOrder.FirstOrDefaultAsync(x => x.Id == id);
+            DeliveryOrder? deliveryOrderForm = await dbContext.DeliveryOrder
+                .Include(x => x.DeletedDeliveryOrderInfo)
+                .Where(c => c.Id != c.DeletedDeliveryOrderInfo.DeliveryOrderId)
+                .FirstOrDefaultAsync(x => x.Id == id);
             return deliveryOrderForm;
         }
 
@@ -38,7 +44,7 @@ namespace DatabaseWorker
             await dbContext.DeliveryOrder.AddAsync(deliveryOrderForm);
             await dbContext.SaveChangesAsync();
         }
-
+        
         public async Task UpdateDeliveryOrderFormsAsync(DeliveryOrder updatedDeliveryOrderForm)
         {
             if (updatedDeliveryOrderForm == null)
@@ -49,35 +55,47 @@ namespace DatabaseWorker
             dbContext.Update(updatedDeliveryOrderForm);
             await dbContext.SaveChangesAsync();
         }
-
-        // TODO: При удалении значения просто переносить значение в другую таблицу
+        
         public async Task DeleteDeliveryOrderFormsAsync(int id)
         {
-            /*await using (var transaction = await dbContext.Database.BeginTransactionAsync())
+            await using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    dbContext.Database.ExecuteSqlCommand(@"UPDATE People SET Age = Age + 1 WHERE Name = 'Sam'");
-                    dbContext.People.Add(new Person { Age = 34, Name = "Bob" });
+                    DeliveryOrder? deliveryOrderForm = dbContext.DeliveryOrder.FirstOrDefault(x => x.Id == id)!;
+
+                    if (deliveryOrderForm == null)
+                    {
+                        throw new ArgumentNullException(nameof(deliveryOrderForm));
+                    }
+                    
+                    await dbContext.DeletedDeliveryOrderInfo.AddAsync(new DeletedDeliveryOrderInfo
+                    {
+                        DeliveryOrderId = deliveryOrderForm.Id,
+                        DeliveryOrder = deliveryOrderForm,
+                        DeletedAt = DateTime.Now,
+
+                    });
+
+                    deliveryOrderForm.IsDeleted = true;
+
+                    dbContext.DeliveryOrder.
+                        Update(deliveryOrderForm);
+
                     await dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
-            }*/
-
-
-            DeliveryOrder? deliveryOrderForm = dbContext.DeliveryOrder.FirstOrDefault(x => x.Id == id)!;
-
-            if (deliveryOrderForm == null)
-            {
-                throw new ArgumentNullException(nameof(deliveryOrderForm));
             }
+        }
 
-            dbContext.DeliveryOrder.Remove(deliveryOrderForm);
-            await dbContext.SaveChangesAsync();
+        public async Task<int> GetIdForNextDeliveryOrder()
+        {
+            int maxId = await dbContext.DeliveryOrder.MaxAsync(x => x.Id);
+            return maxId + 1;
         }
     }
 }

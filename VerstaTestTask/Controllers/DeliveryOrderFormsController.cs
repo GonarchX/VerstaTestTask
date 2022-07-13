@@ -35,9 +35,12 @@ namespace VerstaTestTask.Controllers
 
         // GET: DeliveryOrderForms/Create
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            return View(new DeliveryOrder()
+            {
+                Id = await dbRepository.GetIdForNextDeliveryOrder()
+            });
         }
 
         // POST: DeliveryOrderForms/Create

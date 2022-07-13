@@ -9,5 +9,6 @@ namespace DatabaseWorker
         Task AddDeliveryOrderFormsAsync(DeliveryOrder deliveryOrderForm);
         Task UpdateDeliveryOrderFormsAsync(DeliveryOrder deliveryOrderForm);
         Task DeleteDeliveryOrderFormsAsync(int id);
+        Task<int> GetIdForNextDeliveryOrder();
     }
 }
